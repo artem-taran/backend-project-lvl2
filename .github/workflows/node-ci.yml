@@ -1,0 +1,25 @@
+name: Node.js CI
+
+on: push
+
+jobs:
+  build:
+    name: Lint code base
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: install
+        run: |
+          make install
+
+      - name: run-linter
+        run: |
+          make lint
+
+      - name: run-test
+        run: |
+          make test
