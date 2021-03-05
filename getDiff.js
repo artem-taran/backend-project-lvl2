@@ -8,19 +8,19 @@ const getDiff = (json1, json2) => {
   const keys = _.union(beforeKeys, afterKeys).sort();
 
   const notChangedKeys = _.difference(beforeKeys, afterKeys);
-  const missingKeys = _.difference(afterKeys, beforeKeys);
-  const maybyChangedKeys = _.intersection(beforeKeys, afterKeys);
+  const addedKeys = _.difference(afterKeys, beforeKeys);
+  const commonKeys = _.intersection(beforeKeys, afterKeys);
 
   const reducer = (acc, key) => {
-    if (missingKeys.includes(key)) {
+    if (addedKeys.includes(key)) {
       acc[`+ ${key}`] = after[key];
     }
     if (notChangedKeys.includes(key)) {
       acc[`- ${key}`] = before[key];
     }
-    if (maybyChangedKeys.includes(key)) {
+    if (commonKeys.includes(key)) {
       if (before[key] === after[key]) {
-        acc[key] = before[key];
+        acc[`  ${key}`] = before[key];
       } else {
         acc[`- ${key}`] = before[key];
         acc[`+ ${key}`] = after[key];
