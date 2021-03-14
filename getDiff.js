@@ -1,35 +1,36 @@
 import _ from 'lodash';
 
-const getDiff = (json1, json2) => {
-  const before = JSON.parse(json1);
-  const after = JSON.parse(json2);
-  const beforeKeys = Object.keys(before);
-  const afterKeys = Object.keys(after);
-  const keys = _.union(beforeKeys, afterKeys).sort();
+const getDiff = (obj1, obj2) => {
+  const obj1Keys = Object.keys(obj1);
+  const obj2Keys = Object.keys(obj2);
 
-  const notChangedKeys = _.difference(beforeKeys, afterKeys);
-  const addedKeys = _.difference(afterKeys, beforeKeys);
-  const commonKeys = _.intersection(beforeKeys, afterKeys);
+  const unionKeys = _.union(obj1Keys, obj2Keys).sort();
+  const deletedKeys = _.difference(obj1Keys, obj2Keys);
+  const addedKeys = _.difference(obj2Keys, obj1Keys);
+  const commonKeys = _.intersection(obj1Keys, obj2Keys);
 
   const reducer = (acc, key) => {
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+
     if (addedKeys.includes(key)) {
-      acc[`+ ${key}`] = after[key];
+      acc[`+ ${key}`] = value2;
     }
-    if (notChangedKeys.includes(key)) {
-      acc[`- ${key}`] = before[key];
+    if (deletedKeys.includes(key)) {
+      acc[`- ${key}`] = value1;
     }
     if (commonKeys.includes(key)) {
-      if (before[key] === after[key]) {
-        acc[`  ${key}`] = before[key];
+      if (value1 === value2) {
+        acc[`  ${key}`] = value2;
       } else {
-        acc[`- ${key}`] = before[key];
-        acc[`+ ${key}`] = after[key];
+        acc[`- ${key}`] = value1;
+        acc[`+ ${key}`] = value2;
       }
     }
     return acc;
   };
 
-  const result = keys.reduce(reducer, {});
+  const result = unionKeys.reduce(reducer, {});
 
   return result;
 };
